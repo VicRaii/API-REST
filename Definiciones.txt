@@ -1,0 +1,136 @@
+// ¿Qué es una API? //
+Una API (Application Programming Interface) es un conjunto de reglas,
+ protocolos y herramientas que permite a diferentes aplicaciones comunicarse entre sí. 
+ Proporciona una interfaz para que los desarrolladores accedan a los servicios o funcionalidades 
+ de una aplicación o sistema.
+
+
+
+// ¿Que significa REST? //
+REST (Representational State Transfer) es un estilo arquitectónico que define un conjunto de restricciones 
+y principios para diseñar servicios web que sean escalables, 
+flexibles y fáciles de mantener. Se basa en la transferencia de representaciones de recursos a 
+través de HTTP utilizando sus métodos.
+
+
+
+// Métodos HTTP //
+Los métodos HTTP, como GET, POST, PUT y DELETE, se utilizan para realizar operaciones sobre recursos en un servidor.
+ Cada método tiene un propósito específico: GET para obtener recursos, POST para crear nuevos recursos, 
+ PUT para actualizar recursos existentes y DELETE para eliminar recursos.
+
+
+ 
+// Nodemon // npm i -D nodemon //
+La librería nodemon nos escuchará para que que cuando cambiemos algo en nuestro código y lo guardemos, 
+este recargue el archivo index.js relanzándolo y quitándonos a nosotros el trabajo de cerrarlo y abrirlo en cada cambio.
+Para utilizarla instalaremos la librería con el comando npm i -D nodemon
+Al haberlo ejecutado veremos que nuestro package.json ha cambiado, 
+añadiendo un objeto de devDependencies en el que nos encontramos a nodemon, 
+y además, se habrán generado una carpeta y un archivo adicionales, 
+la carpeta node_modules donde estará el código de las librerías instaladas 
+y el package-lock.json en el que estará toda la información super detallada de cada librería que se ha instalado.
+No hace falta tocarlos ni modificarlos
+
+
+// Express // npm i express //
+Express proporciona una capa adicional de abstracción sobre el núcleo de Node.js, 
+simplificando el proceso de manejar las solicitudes HTTP y las rutas de una aplicación. 
+Con Express, los desarrolladores podremos crear aplicaciones web de manera más rápida 
+y estructurada al proporcionar un conjunto de funciones y herramientas que simplifican tareas comunes.
+
+
+
+// Acceder a una variable del .env // npm i dotenv //
+Si probásemos a hacer un console.log(process.env.DB_URL) que sería la manera de acceder a esa variable 
+en el index.js por ejemplo, podríamos ver que nos da el valor undefined.
+Esto es porque debemos instalar una librería llamada dotenv y configurarla, esto nos permitirá acceder a estas variables
+Instalamos dotenv con el comando npm i dotenv
+Y en la línea 1 de nuestro index.js nos traeremos el módulo y lo configuraremos:
+
+
+
+// Mongoose // npm i mongoose //
+Ahora ya podemos acceder a nuestras variables del .env, así que ya podemos utilizar nuestro link a la BBDD 
+para conectarnos, sin embargo, para conectarnos a la BBDD o realizar cualquier acción sobre la BBDD, 
+necesitaremos una librería llamada mongoose, vamos a instalarla como siempre con el comando npm i mongoose
+Esta librería permite a los desarrolladores de Node.js definir esquemas de datos estructurados para sus aplicaciones, 
+lo que ayuda a organizar y validar los datos que se guardarán en la base de datos MongoDB.
+
+
+// ¿Qué es un Schema de Mongoose? //
+Un esquema de Mongoose es una representación de los datos que se van a almacenar en una colección de MongoDB.
+Cada esquema define los campos que tendrá un documento, así como las validaciones, los tipos de datos 
+y las opciones que se aplicarán a esos campos.
+Mongoose permite crear modelos a partir de esquemas, 
+que se pueden utilizar para interactuar con la base de datos y 
+realizar operaciones CRUD (crear, leer, actualizar y eliminar) en los documentos. 
+Los esquemas de Mongoose ayudan a mantener la integridad y la consistencia 
+de los datos al definir las reglas que se deben seguir al almacenar y recuperar información.
+
+
+
+// ¿Qué es un CRUD? //
+CRUD es un acrónimo de las operaciones básicas de una base de datos: Crear, Leer, Actualizar y Eliminar.
+Una API RESTful CRUD es una interfaz de programación de aplicaciones (API) 
+que permite realizar estas operaciones en una base de datos a través de solicitudes HTTP.
+
+La API RESTful CRUD utiliza los métodos HTTP para crear, leer, actualizar y eliminar recursos en la base de datos.
+Por ejemplo, una solicitud HTTP GET puede ser utilizada para leer un recurso, 
+mientras que una solicitud HTTP POST puede ser utilizada para crear un nuevo recurso. 
+La API RESTful CRUD permite a los desarrolladores crear aplicaciones que 
+se integran con la base de datos de manera simple y eficiente.
+
+
+// Si repasamos lo visto hasta el momento, si usamos estos parámetros podemos hacer lo siguiente.//
+req → Nos permite acceder a la información que el cliente envía al servidor, como las cookies, los query o los request params.
+res → Nos permite modificar las respuestas y enviar datos al cliente tras completar un proceso a través del status o las funciones send o json.
+next → Si llamamos a esta función sin envíar nada como argumento, Express avanzará hasta el siguiente punto de control de la aplicación (middleware), y si enviamos un argumento de tipo error, se lanzará el controlador de errores de Express.
+
+En Express, next es una función que se pasa como argumento a los middlewares o manejadores de rutas para 
+indicarle a Express que continúe con la siguiente función o middleware en la cadena.
+Cuando un middleware o manejador de ruta llama a next(), Express ejecutará la siguiente función 
+en la cadena de middlewares o manejadores de rutas que se han registrado para la ruta actual.
+Si ningún otro middleware o manejador de ruta llama a next(), 
+la solicitud se considera terminada y se envía una respuesta al cliente.
+
+Aquí hay un ejemplo de código de un middleware simple que verifica si el usuario está autenticado y, 
+de lo contrario, redirige a la página de inicio de sesión:
+
+function authenticateMiddleware(req, res, next) {
+  if (!req.user) {
+    return res.redirect('/login');
+  }
+  next();
+}
+
+// Controlador de errores de Express //
+Para crear el controlador de errores de Express, tendremos que añadir un cuarto parámetro al callback de Express, 
+que corresponderá con el Error (err) e irá en primer lugar.
+
+app.use((err, req, res, next) => {
+	return res.status(err.status || 500).json(err.message || 'Unexpected error');
+});
+
+Como dijimos, nuestro código se lanzará de arriba hacia abajo cuando nuestro servidor analice una request,
+por lo que este middleware se añadirá al final de todo nuestro código en index.js
+De esta forma, todo el nuevo código que añadamos a nuestro servidor funcionará hasta llegar al controlador 
+de errores si no se ha resuelto previamente, ya sea por el uso de next() enviando un error debido a nuestro código,
+o porque no encuentra la ruta adecuada.
+
+// Propiedad body para añadir nuevos documentos a nuestra DB //
+Al igual que los enpoints pueden tener query y route params, los endpoints de tipo POST y PUT pueden tener 
+una propiedad llamada body que utilizaremos para enviar datos a estos endpoints.
+
+
+// Seed //
+Para empezar a llenar de documentos nuestra base de datos crearemos una semilla que cargará de golpe 
+muchos documentos, para ello vamos a crear una carpeta llamada seeds (podemos meterla dentro de la carpeta utils) 
+y dentro de ésta un archivo llamado movies.seed.js en el que crearemos un script 
+para llenar nuestra base de datos de información.
+Para ello, vamos a crear también dentro de la carpeta src, una nueva carpeta data, y dentro, 
+un archivo movies.js, donde crearemos un array de objetos con el mismo formato que nuestro esquema movieSchema, 
+que serán las películas que subiremos a la BBDD
+Tened en cuenta que las semillas por norma general sirven para inyectar varios datos de ejemplo, 
+eliminando los que previamente hubiera, esto nos viene bien en fases de desarrollo por si nos cargamos los datos 
+en algún momento, no tener que hacer la tediosa tarea de meter a mano de uno en uno todos los datos nuevamente.
